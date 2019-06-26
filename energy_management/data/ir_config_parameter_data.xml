@@ -1,0 +1,17 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+         <record id="energy_management_mail_template_id" model="ir.config_parameter">
+            <field name="key">energy_management.mail_reminder_template_id</field>
+            <field name="value" ref="energy_management.email_template_energy_meter_reminder"/>
+         </record>
+        <record id="energy_management_mail_reminder_cron_id" model="ir.config_parameter">
+            <field name="key">energy_management.mail_reminder_cron_id</field>
+            <field name="value" ref="energy_management.ir_cron_energy_mail_reminder_action"/>
+        </record>
+        <record id="energy_management_mail_reminder" model="ir.config_parameter">
+            <field name="key">energy_management.mail_reminder</field>
+            <field name="value">False</field>
+        </record>
+    </data>
+</odoo>

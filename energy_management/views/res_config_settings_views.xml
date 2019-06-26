@@ -12,47 +12,48 @@
                      data-string="Energy Management"
                      string="Energy Management" data-key="energy_management"
                      groups="base.group_user">
-                    <h2>Automation</h2>
+                    <field name="energy_cron_id" invisible="1"/>
+                    <h2>Meters - Mail Remindes</h2>
                     <div class="row mt16 o_settings_container">
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane"/>
                             <div class="o_setting_right_pane">
-                                <span class="o_form_label">Default Mail Template</span>
+                                <span class="o_form_label">Mail Template</span>
                                 <div class="text-muted">
-                                    Set the mail template for the automation
+                                    Set the mail template for the reminders.
                                 </div>
                                 <div class="content-group">
                                     <div class="row mt16">
                                         <label string="Mail Template" for="automation_template_id"
                                                class="col-lg-3 o_light_label"/>
-                                        <field name="automation_template_id"/>
+                                        <field name="energy_mail_template_id"/>
                                     </div>
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane">
-                                <field name="automatic_automation"/>
+                                <field name="energy_mail_reminder"/>
                             </div>
                             <div class="o_setting_right_pane">
-                                <label for="automatic_automation"/>
+                                <label for="energy_mail_reminder"/>
                                 <div class="text-muted">
-                                    Set automatically the automation for new meters.
+                                    Activate the mail reminders.
                                 </div>
                             </div>
                         </div>
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane"/>
                             <div class="o_setting_right_pane">
-                                <span class="o_form_label">Default Interval</span>
+                                <span class="o_form_label">Scheduled Action - Execution Date</span>
                                 <div class="text-muted">
-                                    Set automatically the interval for the automation of new meters
+                                    Set the next execution date for the scheduled action of the mail reminders.
                                 </div>
                                 <div class="content-group">
                                     <div class="row mt16">
-                                        <label string="Interval" for="automatic_interval_number"
+                                        <label string="Execution Date" for="energy_cron_nextcall"
                                                class="col-lg-3 o_light_label"/>
-                                        <field name="automatic_interval_number"/>
+                                        <field name="energy_cron_nextcall"/>
                                     </div>
                                 </div>
                             </div>
@@ -60,15 +61,31 @@
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane"/>
                             <div class="o_setting_right_pane">
-                                <span class="o_form_label">Default Interval Type</span>
+                                <span class="o_form_label">Scheduled Action - Interval Number</span>
                                 <div class="text-muted">
-                                    Set automatically the interval type for the automation of new meters
+                                    Set the interval time for the scheduled action of the mail reminders.
                                 </div>
                                 <div class="content-group">
                                     <div class="row mt16">
-                                        <label string="Interval Type" for="automatic_interval_type"
+                                        <label string="Interval Number" for="energy_cron_interval_number"
                                                class="col-lg-3 o_light_label"/>
-                                        <field name="automatic_interval_type"/>
+                                        <field name="energy_cron_interval_number"/>
+                                    </div>
+                                </div>
+                            </div>
+                        </div>
+                        <div class="col-12 col-lg-6 o_setting_box">
+                            <div class="o_setting_left_pane"/>
+                            <div class="o_setting_right_pane">
+                                <span class="o_form_label">Scheduled Action - Interval Type</span>
+                                <div class="text-muted">
+                                    Set the interval type for the scheduled action of the mail reminders.
+                                </div>
+                                <div class="content-group">
+                                    <div class="row mt16">
+                                        <label string="Interval Type" for="energy_cron_interval_type"
+                                               class="col-lg-3 o_light_label"/>
+                                        <field name="energy_cron_interval_type"/>
                                     </div>
                                 </div>
                             </div>

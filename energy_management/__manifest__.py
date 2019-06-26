@@ -23,6 +23,9 @@
         'views/energy_meter_reading_views.xml',
         'views/energy_meter_views.xml',
         'views/res_config_settings_views.xml',
+        'data/ir_cron_data.xml',
+        'data/mail_data.xml',
+        'data/ir_config_parameter_data.xml',
         'security/ir.model.access.csv',
     ],
     # only loaded in demonstration mode

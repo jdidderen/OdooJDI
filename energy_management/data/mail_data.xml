@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <data noupdate="1">
+
+        <record id="email_template_energy_meter_reminder" model="mail.template">
+            <field name="name">Energy Management - Meters: Mail Reminders</field>
+            <field name="model_id" ref="energy_management.model_energy_meter"/>
+            <field name="email_from">${object.company_id.email |safe}</field>
+            <field name="partner_to">${object.partner_id.id}</field>
+            <field name="subject">Mail Reminder - Meter ${object.name or 'n/a' } (Ref ${object.identifier or 'n/a' })</field>
+            <field name="body_html" type="html">
+<div style="margin: 0px; padding: 0px;">
+    <p style="margin: 0px; padding: 0px; font-size: 13px;">
+        Dear ${object.partner_id.name}
+        <br /><br />
+        You have to take the readings of your meter ${object.name or 'n/a' } (Ref ${object.identifier or 'n/a' }) situated at:
+        <br/>
+        % if object.partner_id.street:
+        Street: ${object.partner_id.street}
+        <br/>
+        % endif
+        % if object.partner_id.street2:
+        Street 2: ${object.partner_id.street2}
+        <br/>
+        % endif
+        % if object.partner_id.city:
+        City: ${object.partner_id.city}
+        <br/>
+        % endif
+        % if object.partner_id.zip:
+        zip: ${object.partner_id.zip}
+        <br/>
+        % endif
+        % if object.partner_id.country_id:
+        Country: ${object.partner_id.country_id.name}
+        <br/>
+        % endif
+        <br /><br />
+
+    </p>
+</div>
+            </field>
+            <field name="lang">${object.partner_id.lang}</field>
+            <field name="auto_delete" eval="True"/>
+        </record>
+    </data>
+</odoo>
