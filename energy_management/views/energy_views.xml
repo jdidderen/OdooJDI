@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+
+    <menuitem id="energy_menu_root"
+              name="Energy"
+              web_icon="energy_management,static/description/icon.png"
+              sequence="10"/>
+
+    <menuitem id="enery_meter_menu"
+              name="Meters"
+              parent="energy_menu_root"
+              sequence="1"/>
+
+    <menuitem id="menu_energy_config"
+              name="Configuration"
+              parent="energy_menu_root"
+              sequence="10"/>
+</odoo>

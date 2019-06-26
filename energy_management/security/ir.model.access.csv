@@ -1,0 +1,5 @@
+id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
+access_energy_meter,access_energy_meter,model_energy_meter,base.group_user,1,1,1,1
+access_energy_meter_reading,access_energy_meter_reading,model_energy_meter_reading,base.group_user,1,1,1,1
+access_energy_meter_reading_line,access_energy_meter_reading_line,model_energy_meter_reading_line,base.group_user,1,1,1,1
+access_energy_type,access_energy_type,model_energy_type,base.group_user,1,1,1,1

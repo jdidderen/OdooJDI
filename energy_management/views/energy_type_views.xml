@@ -1,0 +1,38 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="energy_type_view_form" model="ir.ui.view">
+        <field name="name">energy.type.view.form</field>
+        <field name="model">energy.type</field>
+        <field name="arch" type="xml">
+            <form string="Meter">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="name"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="energy_type_view_tree" model="ir.ui.view">
+        <field name="name">energy.type.view.tree</field>
+        <field name="model">energy.type</field>
+        <field name="arch" type="xml">
+            <tree editable="bottom">
+                <field name="name"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="energy_type_view_action" model="ir.actions.act_window">
+        <field name="name">Types</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">energy.type</field>
+        <field name="view_mode">tree,form</field>
+    </record>
+
+    <menuitem id="energy_type_view_menu" name="Types" parent="menu_energy_config" action="energy_type_view_action" sequence="10"/>
+
+</odoo>
