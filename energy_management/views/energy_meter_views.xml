@@ -44,6 +44,16 @@
                                 </form>
                             </field>
                         </page>
+                        <page name="dashboard" string="Dashboard">
+                            <group>
+                                <group>
+                                    <field name="show_on_dashboard"/>
+                                </group>
+                                <group>
+                                    <field name="kanban_dashboard_graph_type"/>
+                                </group>
+                            </group>
+                        </page>
                      </notebook>
                 </sheet>
             </form>
@@ -61,6 +71,20 @@
                 <field name="type_id"/>
                 <field name="mail_reminder"/>
             </tree>
+        </field>
+    </record>
+
+    <record id="energy_meter_view_search" model="ir.ui.view">
+       <field name="name">energy.meter.view.search</field>
+       <field name="model">energy.meter</field>
+        <field name="arch" type="xml">
+            <search string="">
+                <field name="name" filter_domain="['|',('name','ilike',self),('identifier','=',self)]"/>
+                <field name="partner_id"/>
+                <field name="type_id"/>
+                <separator/>
+                <filter name="dashboard" string="Favorites" domain="[('show_on_dashboard', '=', True)]"/>
+            </search>
         </field>
     </record>
 

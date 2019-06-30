@@ -1,10 +1,12 @@
 <?xml version="1.0" encoding="utf-8"?>
 <odoo>
+
+    <!-- Energy Readings -->
     <record id="energy_meter_reading_view_form" model="ir.ui.view">
         <field name="name">energy.meter.reading.view.form</field>
         <field name="model">energy.meter.reading</field>
         <field name="arch" type="xml">
-            <form string="Meter">
+            <form string="Meter Reading">
                 <sheet>
                     <div class="oe_title">
                         <label for="reading_date"/>
@@ -13,7 +15,7 @@
                         </h1>
                     </div>
                     <notebook>
-                        <page name="reading_lines" string="Reading lines">
+                        <page name="reading_lines" string="Reading Lines">
                             <field name="reading_line_ids" nolabel="1" context="{'default_reading_id': active_id}">
                                 <tree editable="bottom">
                                     <field name="reading_id" invisible="1"/>
@@ -63,4 +65,43 @@
 
     <menuitem id="energy_meter_reading_view_menu" name="Meters Readings" parent="enery_meter_menu" action="energy_meter_reading_view_action" sequence="20"/>
 
+    <!-- Energy Reading Lines -->
+    <record id="energy_meter_reading_line_view_form" model="ir.ui.view">
+        <field name="name">energy.meter.reading.line.view.form</field>
+        <field name="model">energy.meter.reading.line</field>
+        <field name="arch" type="xml">
+            <form string="Meter Reading Line">
+                <sheet>
+                    <group>
+                        <group>
+                            <field name="reading_id"/>
+                            <field name="reading_date"/>
+                        </group>
+                        <group>
+                            <field name="meter_id"/>
+                            <field name="number"/>
+                        </group>
+                    </group>
+                </sheet>
+            </form>
+        </field>
+    </record>
+
+    <record id="energy_meter_reading_line_view_tree" model="ir.ui.view">
+        <field name="name">energy.meter.reading.line.view.tree</field>
+        <field name="model">energy.meter.reading.line</field>
+        <field name="arch" type="xml">
+            <tree>
+                <field name="reading_date"/>
+                <field name="number"/>
+            </tree>
+        </field>
+    </record>
+
+    <record id="energy_meter_reading_line_view_action" model="ir.actions.act_window">
+        <field name="name">Meters Reading Lines</field>
+        <field name="type">ir.actions.act_window</field>
+        <field name="res_model">energy.meter.reading.line</field>
+        <field name="view_mode">tree,form</field>
+    </record>
 </odoo>

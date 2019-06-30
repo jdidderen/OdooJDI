@@ -13,7 +13,7 @@
                      string="Energy Management" data-key="energy_management"
                      groups="base.group_user">
                     <field name="energy_cron_id" invisible="1"/>
-                    <h2>Meters - Mail Remindes</h2>
+                    <h2>Meters - Mail Reminders</h2>
                     <div class="row mt16 o_settings_container">
                         <div class="col-12 col-lg-6 o_setting_box">
                             <div class="o_setting_left_pane"/>

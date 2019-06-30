@@ -1,0 +1,99 @@
+<odoo>
+    <record id="energy_meter_dashboard_kanban_view" model="ir.ui.view">
+        <field name="name">energy.meter.dashboard.kanban</field>
+        <field name="model">energy.meter</field>
+        <field name="arch" type="xml">
+            <kanban create="false" class="oe_background_grey o_kanban_dashboard o_energy_meter_kanban">
+                <field name="id"/>
+                <field name="name"/>
+                <field name="type_id"/>
+                <field name="show_on_dashboard"/>
+                <field name="kanban_dashboard_graph_type"/>
+                <field name="color"/>
+                <templates>
+                    <t t-name="kanban-box">
+                        <div t-attf-class="#{kanban_color(record.color.raw_value)}">
+                            <t t-call="MeterTop"/>
+                            <div class="container o_kanban_card_content">
+                                <div class="row">
+                                    <div class="col-6 o_kanban_primary_left">
+                                        <button type="object" name="open_action_reading_lines" class="btn btn-primary">
+                                            <span>Reading Entries</span>
+                                        </button>
+                                    </div>
+                                </div>
+                                 <t t-call="MeterBodyGraph"/>
+                            </div>
+                            <div class="container o_kanban_card_manage_pane dropdown-menu" role="menu">
+                                <t t-call="MeterManage"/>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-name="MeterTop">
+                        <div t-attf-class="o_kanban_card_header">
+                            <div class="o_kanban_card_header_title">
+                                <div class="o_primary">
+                                    <a type="object" name="open_action">
+                                        <field name="name"/>
+                                    </a>
+                                </div>
+                                <div class="o_secondary">
+                                    <field name="type_id"/>
+                                </div>
+                            </div>
+                            <div class="o_kanban_manage_button_section">
+                                <a class="o_kanban_manage_toggle_button" href="#"><i class="fa fa-ellipsis-v" aria-label="Selection" role="img" title="Selection"/></a>
+                            </div>
+                        </div>
+                    </t>
+
+                    <t t-name="MeterManage">
+                        <div class="row">
+                            <div class="col-12 o_kanban_card_manage_section o_kanban_manage_view">
+                                <div class="o_kanban_card_manage_title">
+                                    <span role="separator">New</span>
+                                </div>
+                                <div>
+                                    <a role="menuitem" type="object" name="open_create_reading_action">Meter Reading</a>
+                                </div>
+                            </div>
+                        </div>
+
+                        <div t-if="widget.editable" class="o_kanban_card_manage_settings row">
+                            <div class="col-12">
+                                <ul class="oe_kanban_colorpicker" data-field="color"/>
+                            </div>
+                        </div>
+
+                        <div class="row o_kanban_card_manage_settings">
+                            <div class="col-6">
+                                <field name="show_on_dashboard" widget="boolean_favorite"/>
+                            </div>
+                        </div>
+                        <br/>
+                    </t>
+
+                    <t t-name="MeterBodyGraph">
+                        <field name="kanban_dashboard_graph"
+                               t-att-graph_type="record.kanban_dashboard_graph_type.raw_value"
+                               widget="dashboard_graph"/>
+                    </t>
+                </templates>
+            </kanban>
+        </field>
+    </record>
+
+    <record id="open_energy_meter_dashboard_kanban" model="ir.actions.act_window">
+        <field name="name">Meter Overview</field>
+        <field name="res_model">energy.meter</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">kanban,form</field>
+        <field name="view_id" ref="energy_meter_dashboard_kanban_view"/>
+        <field name="usage">menu</field>
+        <field name="context">{'search_default_dashboard':1}</field>
+    </record>
+
+    <menuitem id="menu_board_energy_meter_1" name="Overview" action="open_energy_meter_dashboard_kanban"
+              parent="energy_menu_root" sequence="10"/>
+</odoo>

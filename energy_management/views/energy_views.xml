@@ -9,10 +9,11 @@
     <menuitem id="enery_meter_menu"
               name="Meters"
               parent="energy_menu_root"
-              sequence="1"/>
+              sequence="20"/>
 
     <menuitem id="menu_energy_config"
               name="Configuration"
               parent="energy_menu_root"
-              sequence="10"/>
+              sequence="100"/>
+
 </odoo>
