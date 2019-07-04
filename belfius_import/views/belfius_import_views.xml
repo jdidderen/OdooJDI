@@ -103,7 +103,7 @@
         <field name="name">belfius.import.line.view.tree</field>
         <field name="model">belfius.import.line</field>
         <field name="arch" type="xml">
-            <tree>
+            <tree editable="bottom">
                 <field name="name"/>
                 <field name="partner_id"/>
                 <field name="account_date"/>
