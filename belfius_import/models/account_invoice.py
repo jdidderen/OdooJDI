@@ -9,6 +9,4 @@ class AccountInvoiceLine(models.Model):
 
     banking_receipt = fields.Char()
     transaction_number = fields.Char()
-    description = fields.Text(string='Description')
-
 

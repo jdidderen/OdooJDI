@@ -1,0 +1,15 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="product_normal_belfius_import_form_view" model="ir.ui.view">
+        <field name="name">product.product.belfius.import.form</field>
+        <field name="model">product.product</field>
+        <field name="inherit_id" ref="product.product_normal_form_view"/>
+        <field name="arch" type="xml">
+            <notebook position="inside">
+                <page name="other_name" string="Other(s) name(s)">
+                    <field name="other_name"/>
+                </page>
+            </notebook>
+        </field>
+    </record>
+</odoo>

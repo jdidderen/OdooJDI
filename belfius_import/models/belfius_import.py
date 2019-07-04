@@ -1,22 +1,17 @@
-import tempfile
-import os
-import csv
 import base64
 import logging
+import openpyxl
+import os
+import datetime
 import pandas as pd
+import tempfile
 from dateutil import parser
-import random
-from urllib.request import urlopen
 
-from odoo import api, fields, models, _
+from odoo import api, fields, models
 from odoo.addons import decimal_precision as dp
-from odoo.exceptions import UserError, ValidationError
 
 _logger = logging.getLogger(__name__)
 
-MIN = 1
-MAX = 1000000
-NUMBER = random.randint(MIN, MAX)
 
 class BelfiusImport(models.Model):
     _name = "belfius.import"
@@ -28,38 +23,48 @@ class BelfiusImport(models.Model):
         selection=[('draft', 'Draft'), ('progress', 'In progress'), ('awaiting', 'Awaiting Confirmation'),
                    ('done', 'Done'), ('error', 'Error')], default='draft')
     line_ids = fields.One2many(comodel_name="belfius.import.line", inverse_name="import_id")
+    mastercard_wordline = fields.Boolean(default=False)
 
     @api.multi
     def create_from_files(self):
         self.ensure_one()
         self.write({'state':'progress'})
+        error = False
         BelfiusImportLine = self.env['belfius.import.line']
-        data_file = base64.decodestring(self.file)
-        fobj = tempfile.NamedTemporaryFile(delete=False)
-        fname = fobj.name
-        fobj.write(data_file)
-        fobj.close()
         try:
-            df = pd.read_csv(fname, sep=';', header=12, encoding='iso-8859-1',
-                             names=["own_account", "account_date", "banking_receipt", "transaction_number",
-                                    "partner_account", "partner_name", "partner_street", "partner_zip_city", "name",
-                                    "value_date", "amount", "currency", "partner_bic", "partner_country",
-                                    "description"],
-                             dtype={'own_account': 'str', 'account_date': 'str', 'banking_receipt': 'str',
-                                     'transaction_number': 'str',
-                                     'partner_account': 'str', 'partner_name': 'str', 'partner_street': 'str',
-                                     'partner_zip_city': 'str',
-                                     'value_date': 'str', 'amount': 'str', 'currency': 'str',
-                                     'partner_bic': 'str',
-                                     'partner_country': 'str', 'description': 'str', })
-            df = df.fillna(False)
-            for index, row in df.iterrows():
-                BelfiusImportLine.process_line(row, self.id)
-        except Exception:
+            data_file = base64.decodestring(self.file)
+            fobj = tempfile.NamedTemporaryFile(delete=False)
+            fobj.write(data_file)
+            if not self.mastercard_wordline:
+                df = pd.read_csv(fobj.name, sep=';', header=12, encoding='iso-8859-1',
+                                 names=["own_account", "account_date", "banking_receipt", "transaction_number",
+                                        "partner_account", "partner_name", "partner_street", "partner_zip_city", "name",
+                                        "value_date", "amount", "currency", "partner_bic", "partner_country",
+                                        "description"],
+                                 dtype={'own_account': 'str', 'account_date': 'str', 'banking_receipt': 'str',
+                                         'transaction_number': 'str',
+                                         'partner_account': 'str', 'partner_name': 'str', 'partner_street': 'str',
+                                         'partner_zip_city': 'str',
+                                         'value_date': 'str', 'amount': 'str', 'currency': 'str',
+                                         'partner_bic': 'str',
+                                         'partner_country': 'str', 'description': 'str', })
+                df = df.fillna(False)
+                for index, row in df.iterrows():
+                    BelfiusImportLine.process_line_normal_receipt(row, self.id)
+            else:
+                wb = openpyxl.load_workbook(fobj)
+                ws = wb.active
+                for row in ws.iter_rows():
+                    BelfiusImportLine.process_line_mastercard_receipt(row,self.id)
+            fobj.close()
+        except Exception as e:
+            _logger.info(e)
+            error = True
             self.write({'state':'error'})
         finally:
-            os.unlink(fname)
-            self.write({'state':'awaiting'})
+            os.unlink(fobj.name)
+            if not error:
+                self.write({'state':'awaiting'})
 
     def _create_invoice(self,partner,type,account_date):
         if type == 'purchase':
@@ -114,7 +119,7 @@ class BelfiusImportLine(models.Model):
     account_date = fields.Date()
     amount = fields.Float(digits=dp.get_precision('Product Price'))
     type = fields.Selection(string="Type", selection=[('sale', 'Sale'), ('purchase', 'Purchase'), ], required=False, )
-    import_id = fields.Many2one(comodel_name="belfius.import")
+    import_id = fields.Many2one(comodel_name="belfius.import",ondelete='cascade')
 
     def create_partner(self, data):
         _logger.info('create_partner')
@@ -140,9 +145,7 @@ class BelfiusImportLine(models.Model):
                 return res_partner.create(partner_vals)
         return False
 
-    def process_line(self, data, import_id):
-        _logger.info('process_line')
-        _logger.info(data)
+    def process_line_normal_receipt(self, data, import_id):
         res_partner_bank = self.env['res.partner.bank']
         res_partner = self.env['res.partner']
         product_product = self.env['product.product']
@@ -193,6 +196,46 @@ class BelfiusImportLine(models.Model):
                 data_line['type'] = 'purchase'
             else:
                 data_line['type'] = 'sale'
+        return self.create(data_line)
+
+    def process_line_mastercard_receipt(self, data, import_id):
+        res_partner = self.env['res.partner']
+        product_product = self.env['product.product']
+        partner = product = False
+
+        data_line = {'import_id': import_id,'name':data[2].value,'account_date':datetime.datetime.strptime(data[0].value, '%d/%m').replace(year=datetime.datetime.now().year)}
+        amount = data[7].value.replace('EUR','')
+        amount = amount.replace(',','.')
+
+        if '-' in amount:
+            amount = -float(amount.replace('-', '').strip())
+            type = 'purchase'
+        else:
+            amount = float(amount.replace('+', '').strip())
+            type = 'sale'
+
+        data_line['amount'] = amount
+        data_line['type'] = type
+
+        partner_search = res_partner.search(['|',('name', '=ilike', data[2].value),('other_name','ilike',data[2].value)], limit=1)
+        if partner_search:
+            partner = partner_search
+
+        if not partner:
+            partner = res_partner.create({'name':data[2].value})
+
+        product_search = product_product.search(['|',('name', '=ilike', data[2].value),('other_name','ilike',data[2].value)], limit=1)
+        if product_search:
+            product = product_search
+
+
+
+        if not partner:
+            partner = self.env.ref('belfius_import.res_partner_unknown')
+        if not product:
+            product = self.env.ref('belfius_import.product_product_unknown')
+        data_line['partner_id'] = partner.id
+        data_line['product_id'] = product.id
         return self.create(data_line)
 
     def create_invoice_line(self,invoice):

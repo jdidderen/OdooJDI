@@ -20,6 +20,9 @@
     'data': [
         'security/ir.model.access.csv',
         'views/belfius_import_views.xml',
+        'views/account_invoice_view.xml',
+        'views/product_product_view.xml',
+        'views/res_partner_view.xml',
         'data/belfius_import_data.xml',
     ],
     # only loaded in demonstration mode
