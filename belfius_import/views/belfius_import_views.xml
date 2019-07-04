@@ -7,8 +7,8 @@
         <field name="arch" type="xml">
             <form string="Belfius Import">
                 <header>
-                    <button name="create_from_files" type="object" string="Import Lines" class="oe_highlight"/>
-                    <button name="confirm_lines" type="object" string="Confirm Lines" class="oe_highlight"/>
+                    <button name="create_from_files" type="object" string="Import Lines" states="draft" class="oe_highlight"/>
+                    <button name="confirm_lines" type="object" states="awaiting" string="Confirm Lines" class="oe_highlight"/>
                     <field name='state' widget='statusbar' statusbar_visible='draft,progress,awaiting,done'/>
                 </header>
                 <sheet>
