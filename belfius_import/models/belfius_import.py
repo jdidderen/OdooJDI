@@ -181,11 +181,12 @@ class BelfiusImportLine(models.Model):
             product_words = str(data.get('name')).split(" ")
             product = False
             for product_word in product_words:
+                pword = ''.join(s for s in product_word if s.isalnum())
                 if product:
                     break
                 product_search = product_product.search(
-                    ['|', ('name', 'ilike', product_word), '|', ('default_code', 'ilike', product_word),
-                     ('other_name', 'ilike', product_word)], limit=1)
+                    ['|', ('name', 'ilike', pword), '|', ('default_code', 'ilike', pword),
+                     ('other_name', 'ilike', pword)], limit=1)
 
                 if product_search:
                     product = product_search
