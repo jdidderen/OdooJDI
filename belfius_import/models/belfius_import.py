@@ -5,7 +5,6 @@ import os
 import datetime
 import pandas as pd
 import tempfile
-from dateutil import parser
 
 from odoo import api, fields, models
 from odoo.addons import decimal_precision as dp
@@ -158,7 +157,7 @@ class BelfiusImportLine(models.Model):
                      'description': data.get('description', ''), 'name': data.get('name', '')}
 
         if data.get('account_date', False):
-            data_line['account_date'] = parser.parse(data.get('account_date'))
+            data_line['account_date'] = datetime.datetime.strptime(data.get('account_date'), '%d/%m/%y')
         if data.get('amount', False):
             if isinstance(data.get('amount'), str):
                 data_line['amount'] = float(data.get('amount').replace(',', '.'))
