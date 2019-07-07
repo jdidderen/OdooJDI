@@ -133,7 +133,7 @@ class BelfiusImportLine(models.Model):
             partner_vals['zip'] = zip[0]
             partner_vals['city'] = city[0]
         if data.get('partner_account', ''):
-            bank_vals['acc_number'] = data.get('partner_account').decode('utf-8')
+            bank_vals['acc_number'] = data.get('partner_account')
         if data.get('partner_country', ''):
             country = res_country.search([('code', '=', data.get('partner_country'))], limit=1)
             if country:
