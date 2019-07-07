@@ -146,11 +146,12 @@ class BelfiusImportLine(models.Model):
         return False
 
     def process_line_normal_receipt(self, data, import_id):
+        _logger.info('process_line_normal')
+        _logger.info(data)
         res_partner_bank = self.env['res.partner.bank']
         res_partner = self.env['res.partner']
         product_product = self.env['product.product']
         partner = product = False
-
         data_line = {'import_id': import_id,
                      'banking_receipt': data.get('banking_receipt', ''),
                      'transaction_number': data.get('transaction_number', ''), 'amount': data.get('amount', 0.0),
