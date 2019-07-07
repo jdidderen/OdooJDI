@@ -177,8 +177,8 @@ class BelfiusImportLine(models.Model):
             partner_create = self.create_partner(data)
             if partner_create:
                 partner = partner_create
-        if data.get('description', False):
-            product_words = str(data.get('description')).split(" ")
+        if data.get('name', False):
+            product_words = str(data.get('name')).split(" ")
             product = False
             for product_word in product_words:
                 if product:
