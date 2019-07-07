@@ -157,7 +157,7 @@ class BelfiusImportLine(models.Model):
                      'description': data.get('description', ''), 'name': data.get('name', '')}
 
         if data.get('account_date', False):
-            data_line['account_date'] = datetime.datetime.strptime(data.get('account_date'), '%d/%m/%y')
+            data_line['account_date'] = datetime.datetime.strptime(data.get('account_date'), '%d-%m-%y')
         if data.get('amount', False):
             if isinstance(data.get('amount'), str):
                 data_line['amount'] = float(data.get('amount').replace(',', '.'))
