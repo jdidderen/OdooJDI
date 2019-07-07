@@ -169,8 +169,8 @@ class BelfiusImportLine(models.Model):
                 partner = bank.partner_id
         if not partner and data.get('partner_name', False):
             partner_search = res_partner.search(
-                ['|', ('name', 'ilike', data.get('partner_name')), '|', ('ref', 'ilike', data.get('partner_name')),
-                 ('other_name', 'ilike', data.get('partner_name'))], limit=1)
+                ['|', ('name', '=ilike', data.get('partner_name')), '|', ('ref', '=ilike', data.get('partner_name')),
+                 ('other_name', '=ilike', data.get('partner_name'))], limit=1)
             if partner_search:
                 partner = partner_search
         if not partner:
@@ -185,8 +185,8 @@ class BelfiusImportLine(models.Model):
                 if product:
                     break
                 product_search = product_product.search(
-                    ['|', ('name', 'ilike', pword), '|', ('default_code', 'ilike', pword),
-                     ('other_name', 'ilike', pword)], limit=1)
+                    ['|', ('name', '=ilike', pword), '|', ('default_code', '=ilike', pword),
+                     ('other_name', '=ilike', pword)], limit=1)
 
                 if product_search:
                     product = product_search
@@ -222,14 +222,14 @@ class BelfiusImportLine(models.Model):
         data_line['amount'] = amount
         data_line['type'] = type
 
-        partner_search = res_partner.search(['|',('name', 'ilike', data[2].value),'|',('ref', 'ilike', data[2].value),('other_name','ilike',data[2].value)], limit=1)
+        partner_search = res_partner.search(['|',('name', '=ilike', data[2].value),'|',('ref', '=ilike', data[2].value),('other_name','=ilike',data[2].value)], limit=1)
         if partner_search:
             partner = partner_search
 
         if not partner:
             partner = res_partner.create({'name':data[2].value})
 
-        product_search = product_product.search(['|',('name', 'ilike', data[2].value),'|',('default_code', 'ilike', data[2].value),('other_name','ilike',data[2].value)], limit=1)
+        product_search = product_product.search(['|',('name', '=ilike', data[2].value),'|',('default_code', '=ilike', data[2].value),('other_name','=ilike',data[2].value)], limit=1)
         if product_search:
             product = product_search
 
