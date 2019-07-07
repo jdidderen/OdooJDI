@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<module type="PYTHON_MODULE" version="4">
+  <component name="NewModuleRootManager">
+    <content url="file://$MODULE_DIR$">
+      <sourceFolder url="file://$MODULE_DIR$/odoo12" isTestSource="false" />
+      <sourceFolder url="file://$MODULE_DIR$/odoo11" isTestSource="false" />
+    </content>
+    <orderEntry type="jdk" jdkName="Python 3.7 (env_py3)" jdkType="Python SDK" />
+    <orderEntry type="sourceFolder" forTests="false" />
+  </component>
+  <component name="ReSTService">
+    <option name="workdir" value="$MODULE_DIR$/energy_management" />
+    <option name="DOC_DIR" value="$MODULE_DIR$/energy_management" />
+  </component>
+  <component name="TestRunnerService">
+    <option name="PROJECT_TEST_RUNNER" value="Unittests" />
+  </component>
+</module>
