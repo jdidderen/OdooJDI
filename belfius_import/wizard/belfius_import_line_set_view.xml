@@ -18,7 +18,6 @@
         </field>
     </record>
 
-    <!--  Merge leads/opportunities action -->
     <record id="belfius_import_line_set_view_action" model="ir.actions.act_window">
         <field name="name">Set Lines</field>
         <field name="res_model">belfius.import.line.set</field>

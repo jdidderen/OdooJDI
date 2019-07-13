@@ -24,6 +24,7 @@
         'views/product_product_view.xml',
         'views/res_partner_view.xml',
         'wizard/belfius_import_line_set_view.xml',
+        'wizard/res_partner_set_view.xml',
         'data/belfius_import_data.xml',
     ],
     # only loaded in demonstration mode
