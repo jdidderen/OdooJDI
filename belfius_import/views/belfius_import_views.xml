@@ -64,8 +64,6 @@
         <field name="view_mode">tree,form</field>
     </record>
 
-    <menuitem id="belfius_import_view_menu" name="Belfius Import" parent="account.menu_finance_reports" action="belfius_import_view_action" sequence="100"/>
-
     <record id="belfius_import_line_view_form" model="ir.ui.view">
         <field name="name">belfius.import.line.view.form</field>
         <field name="model">belfius.import.line</field>
@@ -74,6 +72,7 @@
                 <sheet>
                     <group>
                         <group>
+                            <field name="import_id"/>
                             <field name="partner_id"/>
                             <field name="product_id"/>
                             <field name="account_date"/>
@@ -112,15 +111,31 @@
                 <field name="product_id"/>
                 <field name="amount"/>
                 <field name="type"/>
+                <field name="state"/>
             </tree>
         </field>
     </record>
 
     <record id="belfius_import_line_view_action" model="ir.actions.act_window">
-        <field name="name">belfius.import.line.view.action</field>
+        <field name="name">Belfius Import Lines</field>
         <field name="type">ir.actions.act_window</field>
         <field name="res_model">belfius.import.line</field>
         <field name="view_mode">tree,form</field>
     </record>
+
+    <menuitem id="belfius_view_menu" name="Belfius" parent="account.menu_finance_reports" sequence="100"/>
+    <menuitem id="belfius_import_view_menu" name="Belfius Import" parent="belfius_import.belfius_view_menu" action="belfius_import_view_action" sequence="10"/>
+    <menuitem id="belfius_import_line_view_menu" name="Belfius Import Lines" parent="belfius_import.belfius_view_menu" action="belfius_import_line_view_action" sequence="20"/>
+
+    <act_window
+            id="action_belfius_import_line_set"
+            name="Set Lines"
+            multi="True"
+            key2="client_action_multi"
+            res_model="belfius.import.line.set"
+            src_model="belfius.import.line"
+            view_mode="form"
+            target="new"
+            view_type="form" />
 
 </odoo>

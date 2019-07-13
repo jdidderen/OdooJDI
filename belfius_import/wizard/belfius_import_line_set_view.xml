@@ -1,0 +1,30 @@
+<?xml version="1.0" encoding="utf-8"?>
+<odoo>
+    <record id="belfius_import_line_set_view_form" model="ir.ui.view">
+        <field name="name">belfius.import.line.set.view.form</field>
+        <field name="model">belfius.import.line.set</field>
+        <field name="arch" type="xml">
+            <form string="Set Lines">
+                <group >
+                    <field name="partner_id"/>
+                    <field name="product_id"/>
+                    <field name="type"/>
+                </group>
+                <footer>
+                    <button name="set_lines" type="object" string="Set Lines" class="btn-primary"/>
+                    <button string="Cancel" class="btn-secondary" special="cancel"/>
+                </footer>
+            </form>
+        </field>
+    </record>
+
+    <!--  Merge leads/opportunities action -->
+    <record id="belfius_import_line_set_view_action" model="ir.actions.act_window">
+        <field name="name">Set Lines</field>
+        <field name="res_model">belfius.import.line.set</field>
+        <field name="view_type">form</field>
+        <field name="view_mode">form</field>
+        <field name="view_id" ref="belfius_import_line_set_view_form"/>
+        <field name="target">new</field>
+    </record>
+</odoo>

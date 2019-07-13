@@ -163,6 +163,9 @@ class BelfiusImportLine(models.Model):
     amount = fields.Float(digits=dp.get_precision('Product Price'))
     type = fields.Selection(string="Type", selection=[('sale', 'Sale'), ('purchase', 'Purchase'), ], required=False, )
     import_id = fields.Many2one(comodel_name="belfius.import",ondelete='cascade')
+    state = fields.Selection(
+        selection=[('draft', 'Draft'), ('progress', 'In progress'), ('awaiting', 'Awaiting Confirmation'),
+                   ('done', 'Done'), ('error', 'Error')], related='import_id.state',store=True)
 
     def create_partner(self, data):
         _logger.info('create_partner')
