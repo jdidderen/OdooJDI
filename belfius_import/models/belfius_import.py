@@ -11,6 +11,19 @@ from odoo.addons import decimal_precision as dp
 
 _logger = logging.getLogger(__name__)
 
+MAP_INVOICE_TYPE_PARTNER_TYPE = {
+    'out_invoice': 'customer',
+    'out_refund': 'customer',
+    'in_invoice': 'supplier',
+    'in_refund': 'supplier',
+}
+# Since invoice amounts are unsigned, this is how we know if money comes in or goes out
+MAP_INVOICE_TYPE_PAYMENT_SIGN = {
+    'out_invoice': 1,
+    'in_refund': -1,
+    'in_invoice': -1,
+    'out_refund': 1,
+}
 
 class BelfiusImport(models.Model):
     _name = "belfius.import"
@@ -81,6 +94,26 @@ class BelfiusImport(models.Model):
         })
         return invoice
 
+    def _get_payment_data(self,invoice):
+        payment_method = False
+        if invoice.journal_id and invoice.type in ('out_invoice','in_refund') and invoice.journal_id.inbound_payment_method_ids:
+            payment_method = invoice.journal_id.inbound_payment_method_ids[0].id
+        else:
+            if invoice.journal_id.outbound_payment_method_ids:
+                payment_method = invoice.journal_id.outbound_payment_method_ids[0].id
+
+        return {
+            'payment_method_id':payment_method,
+            'journal_id':invoice.journal_id.id,
+            'communication':invoice.reference or invoice.name or invoice.number,
+            'currency_id':invoice.currency_id.id,
+            'payment_type':invoice.type in ('out_invoice', 'in_refund') and 'inbound' or 'outbound',
+            'partner_type':MAP_INVOICE_TYPE_PARTNER_TYPE[invoice.type],
+            'partner_id':invoice.partner_id.id,
+            'amount':invoice.residual,
+            'invoice_ids': [(4, invoice.id)],
+        }
+
     @api.multi
     def confirm_lines(self):
         self.ensure_one()
@@ -96,14 +129,25 @@ class BelfiusImport(models.Model):
                         if purchase_invoice:
                             for purchase_line in purchase_lines:
                                 purchase_line.create_invoice_line(purchase_invoice)
+                            purchase_invoice.action_invoice_open()
+                            payment = self.env['account.payment'].create(self._get_payment_data(purchase_invoice))
+                            if payment:
+                                payment.action_validate_invoice_payment()
                     sale_lines = lines.filtered(lambda l:l.type == 'sale')
                     if sale_lines:
                         sale_invoice = self._create_invoice(partner_id,'sale',date)
                         if sale_invoice:
                             for asle_line in sale_lines:
                                 asle_line.create_invoice_line(sale_invoice)
+                            sale_invoice.action_invoice_open()
+                            payment = self.env['account.payment'].create(self._get_payment_data(sale_invoice))
+                            if payment:
+                                payment.action_validate_invoice_payment()
+
+
             self.write({'state':'done'})
-        except Exception:
+        except Exception as e:
+            _logger.info(e)
             self.write({'state':'error'})
 
 class BelfiusImportLine(models.Model):
@@ -153,8 +197,7 @@ class BelfiusImportLine(models.Model):
         partner = product = False
         data_line = {'import_id': import_id,
                      'banking_receipt': data.get('banking_receipt', ''),
-                     'transaction_number': data.get('transaction_number', ''), 'amount': data.get('amount', 0.0),
-                     'description': data.get('description', ''), 'name': data.get('name', '')}
+                     'transaction_number': data.get('transaction_number', ''), 'amount': data.get('amount', 0.0),'name': data.get('name', '')}
 
         if data.get('account_date', False):
             data_line['account_date'] = datetime.datetime.strptime(data.get('account_date'), '%d/%m/%Y')
@@ -199,6 +242,7 @@ class BelfiusImportLine(models.Model):
         if data_line.get('amount',False):
             if data_line.get('amount') < 0.0:
                 data_line['type'] = 'purchase'
+                data_line['amount'] = abs(data_line['amount'])
             else:
                 data_line['type'] = 'sale'
         return self.create(data_line)
@@ -213,7 +257,7 @@ class BelfiusImportLine(models.Model):
         amount = amount.replace(',','.')
 
         if '-' in amount:
-            amount = -float(amount.replace('-', '').strip())
+            amount = float(amount.replace('-', '').strip())
             type = 'purchase'
         else:
             amount = float(amount.replace('+', '').strip())
@@ -250,5 +294,5 @@ class BelfiusImportLine(models.Model):
         else:
             account = invoice.journal_id.default_debit_account_id.id
         return self.env['account.invoice.line'].create({'invoice_id': invoice.id, 'price_unit': self.amount, 'quantity': 1,
-                'name':self.name,'description':self.description,'banking_receipt':self.banking_receipt,
+                'name':self.name,'banking_receipt':self.banking_receipt,
                 'transaction_number':self.transaction_number,'product_id':self.product_id.id,'account_id':account})
