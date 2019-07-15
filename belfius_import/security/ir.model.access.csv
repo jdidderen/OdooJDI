@@ -1,3 +1,4 @@
 id,name,model_id:id,group_id:id,perm_read,perm_write,perm_create,perm_unlink
 access_belfius_import,access_belfius_import,model_belfius_import,base.group_user,1,1,1,1
 access_belfius_import_line,access_belfius_import_line,model_belfius_import_line,base.group_user,1,1,1,1
+access_other_name,access_other_name,model_other_name,base.group_user,1,1,1,1
