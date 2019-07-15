@@ -282,8 +282,9 @@ class BelfiusImportLine(models.Model):
         if product_search:
             product = product_search
 
-        product_words = str(data[2].value.split(" "))
+        product_words = str(data[2].value).split(" ")
         for product_word in product_words:
+            _logger.info(product_word)
             pword = ''.join(s for s in product_word if s.isalnum())
             if product:
                 break
