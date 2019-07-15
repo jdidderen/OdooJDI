@@ -269,25 +269,39 @@ class BelfiusImportLine(models.Model):
         data_line['amount'] = amount
         data_line['type'] = type
 
-        partner_search = res_partner.search(['|',('name', '=ilike', data[2].value),'|',('ref', '=ilike', data[2].value),('other_name','=ilike',data[2].value)], limit=1)
-        if partner_search:
-            partner = partner_search
-
         if not partner:
-            partner = res_partner.create({'name':data[2].value})
+            partner_search = res_partner.search(
+                ['|', ('name', '=ilike', data[2].value), '|', ('ref', '=ilike', data[2].value),
+                 ('other_name', '=ilike', data[2].value)], limit=1)
+            if partner_search:
+                partner = partner_search
+        if not partner:
+            partner = res_partner.create({'name': data[2].value})
 
         product_search = product_product.search(['|',('name', '=ilike', data[2].value),'|',('default_code', '=ilike', data[2].value),('other_name','=ilike',data[2].value)], limit=1)
         if product_search:
             product = product_search
 
+        product_words = str(data[2].value.split(" "))
+        for product_word in product_words:
+            pword = ''.join(s for s in product_word if s.isalnum())
+            if product:
+                break
+            product_search = product_product.search(
+                ['|', ('name', '=ilike', pword), '|', ('default_code', '=ilike', pword),
+                    ('other_name', '=ilike', pword)], limit=1)
 
+            if product_search:
+                product = product_search
 
         if not partner:
             partner = self.env.ref('belfius_import.res_partner_unknown')
         if not product:
             product = self.env.ref('belfius_import.product_product_unknown')
+
         data_line['partner_id'] = partner.id
         data_line['product_id'] = product.id
+
         return self.create(data_line)
 
     def create_invoice_line(self,invoice):
