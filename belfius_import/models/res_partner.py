@@ -8,5 +8,3 @@ class ResPartner(models.Model):
     _inherit = "res.partner"
 
     other_name_ids = fields.Many2many(relation="other.name",)
-
-
