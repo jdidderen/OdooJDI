@@ -7,5 +7,5 @@ _logger = logging.getLogger(__name__)
 class ProductProduct(models.Model):
     _inherit = "product.product"
 
-    other_name = fields.Text(string="Other(s) name(s)", required=False, )
+    other_name_ids = fields.Many2many(comodel_name="other.name", )
 
