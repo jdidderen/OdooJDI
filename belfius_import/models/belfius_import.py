@@ -272,7 +272,7 @@ class BelfiusImportLine(models.Model):
         if not partner:
             partner_search = res_partner.search(
                 ['|', ('name', '=ilike', data[2].value), '|', ('ref', '=ilike', data[2].value),
-                 ('other_name', '=ilike', data[2].value)], limit=1)
+                 ('other_name_ids.name', '=ilike', data[2].value)], limit=1)
             if partner_search:
                 partner = partner_search
         if not partner:
