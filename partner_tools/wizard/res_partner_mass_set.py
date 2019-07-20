@@ -2,8 +2,8 @@
 
 from odoo import models, fields, api, _
 
-class ResPartnerSet(models.TransientModel):
-    _name = 'res.partner.set'
+class ResPartnerMassSet(models.TransientModel):
+    _name = 'res.partner.mass.set'
 
     is_company = fields.Boolean(string='Is a Company',)
     customer = fields.Boolean(string='Is a Customer',)
