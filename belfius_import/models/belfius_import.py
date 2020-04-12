@@ -159,7 +159,7 @@ class BelfiusImportLine(models.Model):
     partner_id = fields.Many2one(comodel_name='res.partner')
     product_id = fields.Many2one(comodel_name='product.product')
     account_date = fields.Date()
-    amount = fields.Float(digits=dp.get_precision('Product Price'))
+    amount = fields.Float(digits='Product Price')
     type = fields.Selection(string="Type", selection=[('sale', 'Sale'), ('purchase', 'Purchase'), ], required=False, )
     import_id = fields.Many2one(comodel_name="belfius.import",ondelete='cascade')
     state = fields.Selection(
