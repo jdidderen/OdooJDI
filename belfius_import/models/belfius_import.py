@@ -7,15 +7,16 @@ import pandas as pd
 import tempfile
 
 from odoo import api, fields, models
-from odoo.addons import decimal_precision as dp
 
 _logger = logging.getLogger(__name__)
 
 MAP_INVOICE_TYPE_PARTNER_TYPE = {
     'out_invoice': 'customer',
     'out_refund': 'customer',
+    'out_receipt': 'customer',
     'in_invoice': 'supplier',
     'in_refund': 'supplier',
+    'in_receipt': 'supplier',
 }
 # Since invoice amounts are unsigned, this is how we know if money comes in or goes out
 MAP_INVOICE_TYPE_PAYMENT_SIGN = {
@@ -37,7 +38,6 @@ class BelfiusImport(models.Model):
     line_ids = fields.One2many(comodel_name="belfius.import.line", inverse_name="import_id")
     mastercard_wordline = fields.Boolean(default=False)
 
-    @api.multi
     def create_from_files(self):
         self.ensure_one()
         self.write({'state':'progress'})
@@ -83,7 +83,7 @@ class BelfiusImport(models.Model):
             invoice_type = 'in_invoice'
         else:
             invoice_type = 'out_invoice'
-        invoice = self.env['account.invoice'].create({
+        invoice = self.env['account.move'].create({
             'type': invoice_type,
             'reference': False,
             'account_id': partner.property_account_receivable_id.id,
@@ -114,7 +114,6 @@ class BelfiusImport(models.Model):
             'invoice_ids': [(4, invoice.id)],
         }
 
-    @api.multi
     def confirm_lines(self):
         self.ensure_one()
         try:
@@ -310,6 +309,6 @@ class BelfiusImportLine(models.Model):
             account = invoice.journal_id.default_credit_account_id.id
         else:
             account = invoice.journal_id.default_debit_account_id.id
-        return self.env['account.invoice.line'].create({'invoice_id': invoice.id, 'price_unit': self.amount, 'quantity': 1,
+        return self.env['account.move.line'].create({'invoice_id': invoice.id, 'price_unit': self.amount, 'quantity': 1,
                 'name':self.name,'banking_receipt':self.banking_receipt,
                 'transaction_number':self.transaction_number,'product_id':self.product_id.id,'account_id':account})
