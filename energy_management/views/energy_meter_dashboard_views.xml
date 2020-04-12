@@ -87,7 +87,6 @@
     <record id="open_energy_meter_dashboard_kanban" model="ir.actions.act_window">
         <field name="name">Meter Overview</field>
         <field name="res_model">energy.meter</field>
-        <field name="view_type">form</field>
         <field name="view_mode">kanban,form</field>
         <field name="view_id" ref="energy_meter_dashboard_kanban_view"/>
         <field name="usage">menu</field>
