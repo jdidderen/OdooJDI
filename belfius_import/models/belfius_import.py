@@ -94,26 +94,6 @@ class BelfiusImport(models.Model):
         })
         return invoice
 
-    def _get_payment_data(self,invoice):
-        payment_method = False
-        if invoice.journal_id and invoice.type in ('out_invoice','in_refund') and invoice.journal_id.inbound_payment_method_ids:
-            payment_method = invoice.journal_id.inbound_payment_method_ids[0].id
-        else:
-            if invoice.journal_id.outbound_payment_method_ids:
-                payment_method = invoice.journal_id.outbound_payment_method_ids[0].id
-
-        return {
-            'payment_method_id':payment_method,
-            'journal_id':invoice.journal_id.id,
-            'communication':invoice.reference or invoice.name or invoice.number,
-            'currency_id':invoice.currency_id.id,
-            'payment_type':invoice.type in ('out_invoice', 'in_refund') and 'inbound' or 'outbound',
-            'partner_type':MAP_INVOICE_TYPE_PARTNER_TYPE[invoice.type],
-            'partner_id':invoice.partner_id.id,
-            'amount':invoice.residual,
-            'invoice_ids': [(4, invoice.id)],
-        }
-
     def confirm_lines(self):
         self.ensure_one()
         try:
@@ -129,9 +109,6 @@ class BelfiusImport(models.Model):
                             for purchase_line in purchase_lines:
                                 purchase_line.create_invoice_line(purchase_invoice)
                             purchase_invoice.action_invoice_open()
-                            payment = self.env['account.payment'].create(self._get_payment_data(purchase_invoice))
-                            if payment:
-                                payment.action_validate_invoice_payment()
                     sale_lines = lines.filtered(lambda l:l.type == 'sale')
                     if sale_lines:
                         sale_invoice = self._create_invoice(partner_id,'sale',date)
@@ -139,9 +116,6 @@ class BelfiusImport(models.Model):
                             for asle_line in sale_lines:
                                 asle_line.create_invoice_line(sale_invoice)
                             sale_invoice.action_invoice_open()
-                            payment = self.env['account.payment'].create(self._get_payment_data(sale_invoice))
-                            if payment:
-                                payment.action_validate_invoice_payment()
 
 
             self.write({'state':'done'})
