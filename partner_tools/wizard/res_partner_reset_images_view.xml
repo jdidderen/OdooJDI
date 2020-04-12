@@ -25,11 +25,9 @@
     <act_window
             id="action_res_partner_reset_image"
             name="Reset Images"
-            multi="True"
-            key2="client_action_multi"
             res_model="res.partner.reset.image"
-            src_model="res.partner"
+            binding_model="res.partner"
+            binding_views="list"
             view_mode="form"
-            target="new"
-            view_type="form" />
+            target="new"/>
 </odoo>

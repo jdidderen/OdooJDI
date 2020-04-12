@@ -29,11 +29,9 @@
     <act_window
             id="action_res_partner_mass_set"
             name="Set Partners"
-            multi="True"
-            key2="client_action_multi"
             res_model="res.partner.mass.set"
-            src_model="res.partner"
+            binding_model="res.partner"
+            binding_views="list"
             view_mode="form"
-            target="new"
-            view_type="form" />
+            target="new" />
 </odoo>
