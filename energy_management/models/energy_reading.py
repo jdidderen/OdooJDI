@@ -18,6 +18,5 @@ class EnergyMeterReadingLine(models.Model):
     meter_id = fields.Many2one(comodel_name="energy.meter", string="", required=True, )
     number = fields.Float(string="Number",  required=True, )
 
-    @api.multi
     def name_get(self):
         return [(record.id, '%s - %s' % (record.meter_id.name,record.reading_date)) for record in self]

@@ -11,7 +11,6 @@ class Partner(models.Model):
         for partner in self:
             partner.energy_meter_count = len(partner.energy_meter_ids)
 
-    @api.multi
     def action_view_meter(self):
         meters = self.mapped('energy_meter_ids')
         action = self.env.ref('energy_management.energy_meter_view_action').read()[0]

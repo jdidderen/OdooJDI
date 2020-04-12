@@ -26,7 +26,6 @@ class ResConfigSettings(models.TransientModel):
         )
         return res
 
-    @api.multi
     def set_values(self):
         super(ResConfigSettings, self).set_values()
         self.env.ref('energy_management.ir_cron_energy_mail_reminder_action').write({'active': self.energy_mail_reminder})

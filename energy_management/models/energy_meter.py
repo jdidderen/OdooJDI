@@ -33,7 +33,6 @@ class EnergyMeter(models.Model):
     show_on_dashboard = fields.Boolean(default=True,)
     color = fields.Integer('Color Index',default=0)
 
-    @api.multi
     def _compute_kanban_dashboard_graph(self):
         for meter in self:
             meter.kanban_dashboard_graph = json.dumps(meter.get_graph_datas())
@@ -41,7 +40,6 @@ class EnergyMeter(models.Model):
     def _graph_title_and_key(self):
         return ['','Number']
 
-    @api.multi
     def get_graph_datas(self):
         self.ensure_one()
         data = []
@@ -78,7 +76,6 @@ class EnergyMeter(models.Model):
             raise ValidationError("This type of graph doesn't exit ! Verify the settings of your meter.")
 
 
-    @api.multi
     def open_action(self):
         self.ensure_one()
         return {
@@ -89,7 +86,6 @@ class EnergyMeter(models.Model):
             "target": "current",
         }
 
-    @api.multi
     def open_action_reading_lines(self):
         self.ensure_one()
         return{
@@ -100,11 +96,9 @@ class EnergyMeter(models.Model):
                 "domain": [["meter_id", "=", self.id]],
         }
 
-    @api.multi
     def open_transfer_money(self):
         return self.open_payments_action('transfer')
 
-    @api.multi
     def open_create_reading_action(self):
         [action] = self.env.ref("energy_management.energy_meter_reading_view_action").read()
         action['context'] = dict(safe_eval(action.get('context')))
