@@ -86,12 +86,11 @@ class BelfiusImport(models.Model):
             invoice_type = 'out_invoice'
         invoice = self.env['account.move'].create({
             'type': invoice_type,
-            'reference': False,
-            'account_id': partner.property_account_receivable_id.id,
+            'ref': False,
             'partner_id': partner.id,
-            'currency_id': partner.company_id.currency_id.id,
+            'currency_id': self.env.company.currency_id.id,
             'fiscal_position_id': partner.property_account_position_id.id,
-            'date_invoice':account_date,
+            'invoice_date':account_date,
         })
         return invoice
 
@@ -278,12 +277,12 @@ class BelfiusImportLine(models.Model):
 
         return self.create(data_line)
 
-    def create_invoice_line(self,invoice):
+    def create_invoice_line(self,move):
         self.ensure_one()
-        if invoice.type == 'sale':
-            account = invoice.journal_id.default_credit_account_id.id
+        if move.type == 'sale':
+            account = move.journal_id.default_credit_account_id.id
         else:
-            account = invoice.journal_id.default_debit_account_id.id
-        return self.env['account.move.line'].create({'invoice_id': invoice.id, 'price_unit': self.amount, 'quantity': 1,
+            account = move.journal_id.default_debit_account_id.id
+        return self.env['account.move.line'].create({'move_id': move.id, 'price_unit': self.amount, 'quantity': 1,
                 'name':self.name,'banking_receipt':self.banking_receipt,
-                'transaction_number':self.transaction_number,'product_id':self.product_id.id,'account_id':account})
+                'transaction_number':self.transaction_number,'product_id':self.product_id.id,'account_id':account.id})
