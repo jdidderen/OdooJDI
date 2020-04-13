@@ -79,28 +79,26 @@ class BelfiusImport(models.Model):
             if not error:
                 self.write({'state':'awaiting'})
 
-    def _create_invoice(self,partner,type,account_date):
+    def _create_invoice(self,partner,type,journal,account_date,lines):
         if type == 'purchase':
             invoice_type = 'in_invoice'
-            journal = self.env['account.journal'].search([('type','=','purchase')],limit=1)
         else:
             invoice_type = 'out_invoice'
-            journal = self.env['account.journal'].search([('type','=','sale')],limit=1)
-
-        invoice = self.env['account.move'].create({
-            'type': invoice_type,
-            'ref': False,
+        invoice = self.env['account.move'].with_context(default_type=invoice_type).create({
             'partner_id': partner.id,
             'currency_id': self.env.company.currency_id.id,
             'fiscal_position_id': partner.property_account_position_id.id,
             'invoice_date':account_date,
             'journal_id': journal.id,
+            'invoice_line_ids': lines,
         })
         return invoice
 
     def confirm_lines(self):
         self.ensure_one()
         try:
+            sale_journal = self.env['account.journal'].search([('type','=','sale')],limit=1)
+            purchase_journal = self.env['account.journal'].search([('type','=','purchase')],limit=1)
             partner_ids = self.line_ids.mapped('partner_id')
             for partner_id in partner_ids:
                 dates = sorted(list(set(self.line_ids.filtered(lambda l:l.partner_id.id == partner_id.id).mapped('account_date'))))
@@ -108,20 +106,18 @@ class BelfiusImport(models.Model):
                     lines = self.line_ids.filtered(lambda l:l.partner_id.id == partner_id.id and l.account_date == date)
                     purchase_lines = lines.filtered(lambda l:l.type == 'purchase')
                     if purchase_lines:
-                        purchase_invoice = self._create_invoice(partner_id,'purchase',date)
-                        if purchase_invoice:
-                            for purchase_line in purchase_lines:
-                                purchase_line.create_invoice_line(purchase_invoice)
-                            purchase_invoice.action_invoice_open()
+                        invoice_lines = []
+                        for purchase_line in purchase_lines:
+                            invoice_lines.append((0,0,purchase_line.create_invoice_line(purchase_journal.default_debit_account_id.id)))
+                        purchase_invoice = self._create_invoice(partner_id,'purchase',purchase_journal,date,invoice_lines)
+                        purchase_invoice.action_invoice_open()
                     sale_lines = lines.filtered(lambda l:l.type == 'sale')
                     if sale_lines:
-                        sale_invoice = self._create_invoice(partner_id,'sale',date)
-                        if sale_invoice:
-                            for asle_line in sale_lines:
-                                asle_line.create_invoice_line(sale_invoice)
-                            sale_invoice.action_invoice_open()
-
-
+                        invoice_lines = []
+                        for asle_line in sale_lines:
+                            lines.append((0,0,asle_line.create_invoice_line(sale_journal.default_credit_account_id.id)))
+                        sale_invoice = self._create_invoice(partner_id,'sale',sale_journal,date,invoice_lines)
+                        sale_invoice.action_invoice_open()
             self.write({'state':'done'})
         except Exception as e:
             _logger.info(e)
@@ -281,12 +277,8 @@ class BelfiusImportLine(models.Model):
 
         return self.create(data_line)
 
-    def create_invoice_line(self,move):
+    def create_invoice_line(self,account_id):
         self.ensure_one()
-        if move.type == 'sale':
-            account = move.journal_id.default_credit_account_id.id
-        else:
-            account = move.journal_id.default_debit_account_id.id
-        return self.env['account.move.line'].create({'move_id': move.id, 'price_unit': self.amount, 'quantity': 1,
+        return {'price_unit': self.amount, 'quantity': 1,
                 'name':self.name,'banking_receipt':self.banking_receipt,
-                'transaction_number':self.transaction_number,'product_id':self.product_id.id,'account_id':account})
+                'transaction_number':self.transaction_number,'product_id':self.product_id.id,'account_id':account_id}
