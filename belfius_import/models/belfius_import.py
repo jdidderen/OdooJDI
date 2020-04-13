@@ -277,8 +277,8 @@ class BelfiusImportLine(models.Model):
 
         return self.create(data_line)
 
-    def create_invoice_line(self,invoice):
+    def create_invoice_line(self,move):
         self.ensure_one()
-        return self.env['account.move.line'].create({'invoice_id': invoice.id, 'price_unit': self.amount, 'quantity': 1,
+        return self.env['account.move.line'].create({'move_id': move.id, 'price_unit': self.amount, 'quantity': 1,
                 'name':self.name,'banking_receipt':self.banking_receipt,
                 'transaction_number':self.transaction_number,'product_id':self.product_id.id})
