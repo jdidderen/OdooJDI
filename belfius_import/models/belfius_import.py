@@ -90,7 +90,7 @@ class BelfiusImport(models.Model):
             'partner_id': partner.id,
             'currency_id': partner.company_id.currency_id.id,
             'fiscal_position_id': partner.property_account_position_id.id,
-            'date_invoice':account_date,
+            'invoice_date':account_date,
         })
         return invoice
 
