@@ -82,8 +82,11 @@ class BelfiusImport(models.Model):
     def _create_invoice(self,partner,type,account_date):
         if type == 'purchase':
             invoice_type = 'in_invoice'
+            journal = self.env['account.journal'].search([('type','=','purchase')],limit=1)
         else:
             invoice_type = 'out_invoice'
+            journal = self.env['account.journal'].search([('type','=','sale')],limit=1)
+
         invoice = self.env['account.move'].create({
             'type': invoice_type,
             'ref': False,
@@ -91,6 +94,7 @@ class BelfiusImport(models.Model):
             'currency_id': self.env.company.currency_id.id,
             'fiscal_position_id': partner.property_account_position_id.id,
             'invoice_date':account_date,
+            'journal_id': journal.id,
         })
         return invoice
 
