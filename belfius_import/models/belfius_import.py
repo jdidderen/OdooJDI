@@ -279,6 +279,10 @@ class BelfiusImportLine(models.Model):
 
     def create_invoice_line(self,move):
         self.ensure_one()
+        if move.type == 'sale':
+            account = move.journal_id.default_credit_account_id.id
+        else:
+            account = move.journal_id.default_debit_account_id.id
         return self.env['account.move.line'].create({'move_id': move.id, 'price_unit': self.amount, 'quantity': 1,
                 'name':self.name,'banking_receipt':self.banking_receipt,
                 'transaction_number':self.transaction_number,'product_id':self.product_id.id})
