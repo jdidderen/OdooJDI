@@ -49,7 +49,7 @@ class BelfiusImport(models.Model):
             fobj = tempfile.NamedTemporaryFile(delete=False)
             fobj.write(data_file)
             if not self.mastercard_wordline:
-                df = pd.read_csv(fobj.name, sep=';', header=12, encoding='iso-8859-1',
+                df = pd.read_csv(fobj.name, sep=';', header=1, encoding='iso-8859-1',
                                  names=["own_account", "account_date", "banking_receipt", "transaction_number",
                                         "partner_account", "partner_name", "partner_street", "partner_zip_city", "name",
                                         "value_date", "amount", "currency", "partner_bic", "partner_country",
