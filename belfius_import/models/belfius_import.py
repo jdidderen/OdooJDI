@@ -115,7 +115,7 @@ class BelfiusImport(models.Model):
                     if sale_lines:
                         invoice_lines = []
                         for asle_line in sale_lines:
-                            lines.append((0,0,asle_line.create_invoice_line(sale_journal.default_credit_account_id.id)))
+                            invoice_lines.append((0,0,asle_line.create_invoice_line(sale_journal.default_credit_account_id.id)))
                         sale_invoice = self._create_invoice(partner_id,'sale',sale_journal,date,invoice_lines)
                         sale_invoice.action_post()
             self.write({'state':'done'})
