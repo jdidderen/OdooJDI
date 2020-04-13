@@ -285,4 +285,4 @@ class BelfiusImportLine(models.Model):
             account = move.journal_id.default_debit_account_id.id
         return self.env['account.move.line'].create({'move_id': move.id, 'price_unit': self.amount, 'quantity': 1,
                 'name':self.name,'banking_receipt':self.banking_receipt,
-                'transaction_number':self.transaction_number,'product_id':self.product_id.id})
+                'transaction_number':self.transaction_number,'product_id':self.product_id.id,'account_id':account.id})
