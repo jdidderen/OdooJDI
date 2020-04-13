@@ -110,14 +110,14 @@ class BelfiusImport(models.Model):
                         for purchase_line in purchase_lines:
                             invoice_lines.append((0,0,purchase_line.create_invoice_line(purchase_journal.default_debit_account_id.id)))
                         purchase_invoice = self._create_invoice(partner_id,'purchase',purchase_journal,date,invoice_lines)
-                        purchase_invoice.action_invoice_open()
+                        purchase_invoice.action_post()
                     sale_lines = lines.filtered(lambda l:l.type == 'sale')
                     if sale_lines:
                         invoice_lines = []
                         for asle_line in sale_lines:
                             lines.append((0,0,asle_line.create_invoice_line(sale_journal.default_credit_account_id.id)))
                         sale_invoice = self._create_invoice(partner_id,'sale',sale_journal,date,invoice_lines)
-                        sale_invoice.action_invoice_open()
+                        sale_invoice.action_post()
             self.write({'state':'done'})
         except Exception as e:
             _logger.info(e)
