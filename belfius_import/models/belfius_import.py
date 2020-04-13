@@ -178,10 +178,10 @@ class BelfiusImportLine(models.Model):
         if data.get('account_date', False):
             try:
                 data_line['account_date'] = datetime.datetime.strptime(data.get('account_date'), '%d/%m/%Y')
-            except ValueError:
+            except:
                 try:
                     data_line['account_date'] = datetime.datetime.strptime(data.get('account_date'), '%d-%m-%Y')
-                except ValueError:
+                except:
                     data_line['account_date'] = False
         if data.get('amount', False):
             if isinstance(data.get('amount'), str):
